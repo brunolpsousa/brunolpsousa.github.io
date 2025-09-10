@@ -3,6 +3,7 @@ import '@style/global.css';
 import Layout from '@app/layout/layout';
 import Footer from '@components/Footer';
 import { darkThemeIcon, metadata as appMetadata } from '@data';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 
@@ -30,6 +31,7 @@ export default function RootLayout({
       >
         <Layout>{children}</Layout>
         <Footer />
+        <SpeedInsights />
       </body>
     </html>
   );
