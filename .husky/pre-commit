@@ -1,2 +1,27 @@
-npm run format || { echo -e '\n\e[31mFormat code before commit!\e[93m'; exit 1; }
-npm run lint || { echo -e '\n\e[31mRun lint before commit!\e[93m'; exit 1; }
+#!/usr/bin/env bash
+
+if [ -z "${BASH:-}" ]; then
+  exec bash "$0" "$@"
+fi
+
+files_list=$(git diff --cached --name-only | grep -E '.*\.([ts|tsx|js|jsx])+$' || true);
+files=();
+
+for file in ${files_list[@]}; do
+  if [[ -f $file ]]; then
+    files+=($file);
+  fi
+done
+
+if [[ -z ${files[@]} || ${#files[@]} -eq 0 ]]; then
+  echo "No files to check";
+  exit 0;
+fi
+
+echo "Checking format and lint for $(set -o noglob; set -- ${files[@]}; echo "$#") file(s):";
+for file in ${files[@]}; do echo $file; done; echo;
+
+npx prettier --write ${files[@]};
+git add ${files[@]};
+npx eslint --fix ${files[@]};
+git add ${files[@]};
